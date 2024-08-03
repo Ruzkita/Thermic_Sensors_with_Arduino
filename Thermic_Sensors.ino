@@ -1,3 +1,6 @@
+//THERMIC SENSORS IMPLEMENTATION
+//by: Lucas Leonardo
+
 #include <Wire.h> 
 #include "ADS1X15.h"
 #include <math.h>
