@@ -17,13 +17,13 @@ void setup() {
   Serial.begin(115200);
   Wire.begin();
   ADS.begin();
-  pinMode(51, OUTPUT);
-  pinMode(49, OUTPUT);
-  pinMode(47, OUTPUT);
-  pinMode(45, OUTPUT);
+  pinMode(2, OUTPUT);
+  pinMode(3, OUTPUT);
+  pinMode(4, OUTPUT);
+  pinMode(5, OUTPUT);
 }
 
-int state_machine(int i){   //implemantation of a state machine to control the multiplexer
+int state_machine(int i){   //implementation of a state machine to control the multiplexer
   if (i == 0){      multi_ctr[0] = 0; multi_ctr[1] = 0; multi_ctr[2] = 0; multi_ctr[3] = 0;};
   if (i == 1){      multi_ctr[0] = 0; multi_ctr[1] = 0; multi_ctr[2] = 0; multi_ctr[3] = 1;};
   if (i == 2){      multi_ctr[0] = 0; multi_ctr[1] = 0; multi_ctr[2] = 1; multi_ctr[3] = 0;};
@@ -41,10 +41,10 @@ int state_machine(int i){   //implemantation of a state machine to control the m
   if (i == 14){     multi_ctr[0] = 1; multi_ctr[1] = 1; multi_ctr[2] = 1; multi_ctr[3] = 0;};
   if (i == 15){     multi_ctr[0] = 1; multi_ctr[1] = 1; multi_ctr[2] = 1; multi_ctr[3] = 1;};
 
-  if (multi_ctr[0] == 0){digitalWrite(51, LOW);} else{digitalWrite(51, HIGH);};   //output ports that will control the multiplexer
-  if (multi_ctr[1] == 0){digitalWrite(49, LOW);} else{digitalWrite(49, HIGH);};
-  if (multi_ctr[2] == 0){digitalWrite(47, LOW);} else{digitalWrite(47, HIGH);};
-  if (multi_ctr[3] == 0){digitalWrite(45, LOW);} else{digitalWrite(45, HIGH);};
+  if (multi_ctr[0] == 0){digitalWrite(2, LOW);} else{digitalWrite(2, HIGH);};   //output ports that will control the multiplexer
+  if (multi_ctr[1] == 0){digitalWrite(3, LOW);} else{digitalWrite(3, HIGH);};
+  if (multi_ctr[2] == 0){digitalWrite(4, LOW);} else{digitalWrite(4, HIGH);};
+  if (multi_ctr[3] == 0){digitalWrite(5, LOW);} else{digitalWrite(5, HIGH);};
 }
 
 float get_tension(){    //function to get the tension in the 3k3[Ω] resistor
@@ -75,7 +75,7 @@ void loop() {
       if (j == 0){
         Serial.println("");
       }
-      Serial.print("Temperature "); Serial.print(j); Serial.print(": "); Serial.print(temperature[j]); Serial.println("ºC");
+      Serial.print("Temperature at the sensor "); Serial.print(j); Serial.print(": "); Serial.print(temperature[j]); Serial.println("ºC");
     }
     i = 0;
   } 
