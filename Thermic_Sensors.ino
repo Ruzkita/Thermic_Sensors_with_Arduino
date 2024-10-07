@@ -6,12 +6,13 @@
 #include <math.h>
 
 ADS1115 ADS(0x48);
-int i = 0;
+int i = 0, k = 0;
 float tension = 0;
-float R1 = 3300, R2 = 1200, R3 = 100, R4 = 100; //    3k3[Ω], 1k2[Ω], 100[Ω], 100[Ω]
+float R1 = 3300, R2 = 1200, R3 = 100, R4 = 100;     //3k3[Ω], 1k2[Ω], 100[Ω], 100[Ω]
 float c1 = 23.476, c2 = 0.035;    //constants of NTCs temperature variation equation
-int multi_ctr[4] = {0, 0, 0, 0};
-float temperature[16];
+float max_temp = 100;     //maximum temperatures constants
+int multi_ctr[4] = {0, 0, 0, 0};    //multiplexer control 
+float temperature[16];    //temperature itself
 
 void setup() {
   Serial.begin(115200);
@@ -21,6 +22,8 @@ void setup() {
   pinMode(3, OUTPUT);
   pinMode(4, OUTPUT);
   pinMode(5, OUTPUT);
+  pinMode(7, OUTPUT);   //relay in 1
+  pinMode(8, OUTPUT);   //relay in 2
 }
 
 int state_machine(int i){   //implementation of a state machine to control the multiplexer
@@ -63,6 +66,35 @@ float get_temperature(float tension, int i){    //this function will convert the
   return temperature[i] = eq_temperature;
 }
 
+float relay_control(float temperature[16]){     //control the relay's on/off using a control matrix 
+  float control_matrix[16][20];
+  float off[16];
+  int j;
+  for (j = 0; j <= 15; j++){
+    control_matrix[j][k] = temperature[j];
+  }
+  k++;
+  if (k == 20){
+    int l;
+    for (j = 0; j <= 15; j++){
+      for (l = 0; l <= 19; l++){
+        if (control_matrix[j][l] >= max_temp){
+          off[l]++;
+        }
+        else off[l]--;
+      }
+    }
+    
+    for (j = 0; j <= 15; j++){
+      if (off[j] >= max_temp){
+        digitalWrite(7, HIGH);
+      }
+    }
+    k = 0;
+  }
+}
+
+
 void loop() {
   state_machine(i);
   delay(200);
@@ -70,8 +102,9 @@ void loop() {
   get_temperature(tension, i);
 
   if (i == 15){
+    relay_control(temperature);
     int j = 0;
-    for(j = 0; j <= 15; j++){
+    for (j = 0; j <= 15; j++){
       if (j == 0){
         Serial.println("");
       }
@@ -79,5 +112,5 @@ void loop() {
     }
     i = 0;
   } 
-  else {i++;};
+  else i++;
 }
